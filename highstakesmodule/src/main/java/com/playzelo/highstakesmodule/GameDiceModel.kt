@@ -1,17 +1,20 @@
 package com.playzelo.highstakesmodule
 
+
+import android.content.Context
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.playzelo.highstakesmodule.components.SoundManager
+import com.playzelo.highstakesmodule.data.ApiClient
+import com.playzelo.highstakesmodule.data.RollRequest
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
-
+import kotlin.coroutines.Continuation
 
 
 class GameDiceModel : ViewModel() {
-
     private val _tokenType = MutableStateFlow("default")
 
     val tokenType: StateFlow<String> = _tokenType
@@ -76,15 +79,49 @@ class GameDiceModel : ViewModel() {
         _isRollEnabled.value = _betAmount.value > 0   // ✅ Bet lagate hi roll enable
     }
 
-    fun rollDice(soundManager: SoundManager) {
-        if (_isRollEnabled.value.not()) return  // safety check
+//    fun rollDice(soundManager: SoundManager) {
+//        if (_isRollEnabled.value.not()) return  // safety check
+//
+//        _isRollEnabled.value = false  // ✅ ek click ke baad disable
+//        _diceV1.value = (1..6).random()
+//        _diceV2.value = (1..6).random()
+//        val steps = _diceV1.value + _diceV2.value
+//        moveToken(steps, soundManager)
+//    }
+private var _pendingBalance: Double = 0.0 // temp balance, token rukne ke liye
 
-        _isRollEnabled.value = false  // ✅ ek click ke baad disable
-        _diceV1.value = (1..6).random()
-        _diceV2.value = (1..6).random()
-        val steps = _diceV1.value + _diceV2.value
-        moveToken(steps, soundManager )
+    fun rollDiceFromApi(userId: String, soundManager: SoundManager) {
+        if (!_isRollEnabled.value) return
+        _isRollEnabled.value = false
+
+        viewModelScope.launch {
+            try {
+                val response = ApiClient.api.rollDice(
+                    RollRequest(userId, _betAmount.value)
+                )
+
+                _diceV1.value = response.dice.getOrNull(0) ?: (1..6).random()
+                _diceV2.value = response.dice.getOrNull(1) ?: (1..6).random()
+                val steps = response.dice.sum()
+
+                _pendingBalance = response.walletBalance.toDouble()
+
+                moveToken(steps, soundManager)
+
+            } catch (e: Exception) {
+                e.printStackTrace()
+                // Fallback dice
+                _diceV1.value = (1..6).random()
+                _diceV2.value = (1..6).random()
+                val steps = _diceV1.value + _diceV2.value
+
+                moveToken(steps, soundManager) // ✅ token movement ensure
+            }
+        }
     }
+
+
+
 
 
     fun onInputChange(newValue: String) {
@@ -93,44 +130,74 @@ class GameDiceModel : ViewModel() {
         }
     }
 
-//    fun placeBet() {
-//        _betAmount.value = inputText.value.toDoubleOrNull() ?: 0.0
-//    }
+//    private fun moveToken(steps: Int, soundManager: SoundManager) {
 //
-//    fun rollDice() {
-//        _diceV1.value = (1..6).random()
-//        _diceV2.value = (1..6).random()
-//        val steps = _diceV1.value + _diceV2.value
-//        moveToken(steps)
+//        viewModelScope.launch {
+//            // 🎯 Hamesha start card se shuru karo
+//            var currentPos = 0
+//            _tokenIndex.value = boardPath[currentPos]
+//
+//            for (i in 1..steps) {
+//                delay(300)
+//                currentPos = (currentPos + 1) % boardPath.size
+//                _tokenIndex.value = boardPath[currentPos]
+//                soundManager.TokenSound(0.3f)
+//                _isFinalStop.value = (i == steps)
+//            }
+//
+//            // ✅ multiplier logic
+//
+//            val multiplier = multipliers[_tokenIndex.value] ?: 1.0
+//            when {
+//                multiplier == 0.0 -> _betAmount.value = 0.0
+//                multiplier < 0.0 -> _betAmount.value /= 2
+//                else -> _betAmount.value *= multiplier
+//            }
+//
+//        }
 //    }
+private fun moveToken(steps: Int, soundManager: SoundManager) {
 
-    private fun moveToken(steps: Int,soundManager: SoundManager) {
+    viewModelScope.launch {
 
-        viewModelScope.launch {
-            // 🎯 Hamesha start card se shuru karo
-            var currentPos = 0
+        // 🎯 Hamesha start card se shuru karo
+        var currentPos = 0
+        _tokenIndex.value = boardPath[currentPos]
+
+        for (i in 1..steps) {
+            delay(300) // token animation speed
+            currentPos = (currentPos + 1) % boardPath.size
             _tokenIndex.value = boardPath[currentPos]
+            soundManager.TokenSound(0.3f)
 
-            //sound
-            //val soundManager = SoundManager(getApplication<Application>().applicationContext)
+            // ✅ final stop
+            _isFinalStop.value = (i == steps)
 
-            for (i in 1 .. steps) {
-                delay(300)
-                currentPos = (currentPos + 1) % boardPath.size
-                _tokenIndex.value = boardPath[currentPos]
-                soundManager.TokenSound(0.3f)
-                _isFinalStop.value = (i == steps)
-            }
+            // 🔥 Balance update aur roll enable sirf final step pe
+//            if (i == steps) {
+//                _betAmount.value = _pendingBalance   // API ya pending balance assign
+//                _isRollEnabled.value = true
+//            }
 
-            // ✅ multiplier logic
-
-            val multiplier = multipliers[_tokenIndex.value] ?: 1.0
-            when {
-                multiplier == 0.0 -> _betAmount.value = 0.0
-                multiplier < 0.0 -> _betAmount.value /= 2
-                else -> _betAmount.value *= multiplier
+            // inside moveToken, after token finishes moving
+            if (i == steps) {
+                val baseAmount = _pendingBalance// API returned balance or bet
+                val multiplier = multipliers[_tokenIndex.value] ?: 1.0
+                _betAmount.value = if (multiplier == 0.0) 0.0 else baseAmount * multiplier
+                _isRollEnabled.value = true
             }
 
         }
+
+        // multiplier logic agar tumhare UI me hai
+        val multiplier = multipliers[_tokenIndex.value] ?: 1.0
+        when {
+            multiplier == 0.0 -> _betAmount.value = 0.0
+            multiplier < 0.0 -> _betAmount.value /= 2
+            else -> _betAmount.value *= multiplier
+        }
     }
+}
+
+
 }

@@ -1,6 +1,5 @@
 package com.playzelo.highstakesmodule.screens
 
-
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
@@ -24,7 +23,6 @@ import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextFieldDefaults
 import androidx.compose.runtime.Composable
-import com.playzelo.highstakesmodule.R
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
@@ -46,6 +44,7 @@ import com.airbnb.lottie.compose.LottieCompositionSpec
 import com.airbnb.lottie.compose.animateLottieCompositionAsState
 import com.airbnb.lottie.compose.rememberLottieComposition
 import com.playzelo.highstakesmodule.GameDiceModel
+import com.playzelo.highstakesmodule.R
 import com.playzelo.highstakesmodule.components.BackPressWithDialog
 import com.playzelo.highstakesmodule.components.BetButton
 import com.playzelo.highstakesmodule.components.CardWithToken
@@ -143,6 +142,7 @@ fun GameScreen(
         Spacer(modifier = Modifier.height(12.dp))
 
         // ===== MIDDLE ROW =====
+
         Row(horizontalArrangement = Arrangement.spacedBy(12.dp)) {
             // Left Column
             Column(verticalArrangement = Arrangement.spacedBy(12.dp)) {
@@ -151,7 +151,6 @@ fun GameScreen(
             }
 
             // Center Dice
-
             DiceCard(
                 diceV1,
                 diceV2,
@@ -243,8 +242,8 @@ fun GameScreen(
             BetButton(onClick = { viewModel.placeBet() })
 
             RollButton(
-                onClick = { viewModel.rollDice(soundManager) },
-                enabled = isRollEnabled, // 👈 Bet lagne ke baad hi enable
+                onClick = { viewModel.rollDiceFromApi("RahulApp",soundManager) },
+                enabled = isRollEnabled,   //  Bet lagne ke baad hi enable
 
             )
 
@@ -255,7 +254,6 @@ fun GameScreen(
         }
     }
 }
-
 
 ///composables
 
@@ -331,3 +329,5 @@ fun Win(speed: Float = 2f) {
 
     )
 }
+
+

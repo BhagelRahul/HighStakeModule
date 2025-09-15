@@ -90,7 +90,7 @@ fun EntryScreen(navController: NavHostController) {
             • Please gamble responsibly — set limits and stop when needed.  
             • If you or someone you know has a gambling problem, seek help immediately.
         """.trimIndent(),
-                        color = Color.White,
+                        color = Color.Black,
                         fontSize = 16.sp,
                         lineHeight = 22.sp
                     )
