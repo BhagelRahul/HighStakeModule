@@ -34,7 +34,7 @@ fun CardWithToken(
     val isSafeStop = isFinalStop && index == tokenIndex && index !in riskyCards
     val isMoving = index == tokenIndex && !isFinalStop
 
-    val bgColor = when {
+     val bgColor = when {
         isRiskyStop -> Color.Red.copy(alpha = 0.3f)
         isSafeStop -> Color(0xFF00BFFF).copy(alpha = 0.3f)
         isMoving -> Color(0xFF00BFFF).copy(alpha = 0.2f)
