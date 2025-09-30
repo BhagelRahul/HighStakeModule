@@ -14,7 +14,7 @@ import com.playzelo.highstakesmodule.navigation.AppNavHost
 import com.playzelo.highstakesmodule.theme.HighStakesDiceTheme
 
 
-class StakesMainActivity : ComponentActivity() {
+ class StakesMainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         // Enable edge-to-edge drawing
@@ -24,10 +24,9 @@ class StakesMainActivity : ComponentActivity() {
         WindowCompat.setDecorFitsSystemWindows(window, false)
         val controller = WindowInsetsControllerCompat(window, window.decorView)
         controller.hide(WindowInsetsCompat.Type.systemBars())
-        controller.systemBarsBehavior =
-            WindowInsetsControllerCompat.BEHAVIOR_SHOW_TRANSIENT_BARS_BY_SWIPE
+        controller.systemBarsBehavior = WindowInsetsControllerCompat.BEHAVIOR_SHOW_TRANSIENT_BARS_BY_SWIPE
 
-        setContent {
+           setContent {
             HighStakesDiceTheme {
                 Scaffold(modifier = Modifier.fillMaxSize()) { innerPadding ->
                     AppNavHost()

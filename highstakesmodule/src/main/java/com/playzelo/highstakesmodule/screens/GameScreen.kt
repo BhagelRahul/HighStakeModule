@@ -1,5 +1,6 @@
 package com.playzelo.highstakesmodule.screens
 
+import android.util.Log
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
@@ -102,12 +103,6 @@ fun GameScreen(
             verticalAlignment = Alignment.CenterVertically,
             horizontalArrangement = Arrangement.SpaceEvenly
         ) {
-//            Icon(
-//                imageVector = Icons.Filled.Search,
-//                contentDescription = null,
-//                tint = Color.White,
-//                modifier = Modifier.size(18.dp)
-//            )
             Image(
                 painter = painterResource(id = R.mipmap.stakeslogo),
                 contentDescription = "",
@@ -228,7 +223,8 @@ fun GameScreen(
                         unfocusedContainerColor = Color(0xFF182C31),
                         focusedTextColor = Color.White,
                         unfocusedTextColor = Color.White,
-                        cursorColor = Color(0xFF234F48)
+                       // cursorColor = Color(0xFF234F48)
+                        cursorColor = Color(0xFF00FF00)
                     )
                 )
 
@@ -237,18 +233,21 @@ fun GameScreen(
                 Text(text = "1/5", color = Color.White)
             }
 
+
             // Buttons
-            // Buttons
-            BetButton(onClick = { viewModel.placeBet() })
+            BetButton(onClick = {
+                Log.d("Game Screen", "Bet placed with amount: ${viewModel.inputText.value}")
+                viewModel.placeBet()
+            })
 
             RollButton(
-                onClick = { viewModel.rollDiceFromApi("RahulApp",soundManager) },
+                onClick = {
+                    Log.d("Game Screen", "Roll Dice button clicked")
+                    viewModel.rollDiceFromApi("RahulApp", soundManager)
+                },
                 enabled = isRollEnabled,   //  Bet lagne ke baad hi enable
 
             )
-
-            // BetButton(onClick = { viewModel.placeBet() })
-            // RollButton(onClick = { viewModel.rollDice() })
 
             Spacer(modifier = Modifier.height(10.dp))
         }

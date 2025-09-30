@@ -19,41 +19,6 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 
-//
-//@Composable
-//fun RollButton(onClick: () -> Unit) {
-//    val interactionSource = remember { MutableInteractionSource() }
-//    val isPressed by interactionSource.collectIsPressedAsState()
-//
-//    // Animate background color
-//    val backgroundColor by animateColorAsState(
-//        targetValue = if (isPressed) Color(0xFF136013) else Color(0xFF00FF00),
-//        label = "buttonColor"
-//    )
-//
-//    Button(
-//        onClick = onClick,
-//         modifier = Modifier
-//            .fillMaxWidth()
-//            .padding(horizontal = 16.dp, vertical = 8.dp)
-//            .height(50.dp),
-//        colors = ButtonDefaults.buttonColors(
-//            containerColor = backgroundColor
-//        ),
-//        shape = RoundedCornerShape(12.dp),
-//        elevation = ButtonDefaults.buttonElevation(defaultElevation = 4.dp),
-//        interactionSource = interactionSource   // needed for pressed state
-//    ) {
-//        Text(
-//            text = "Roll",
-//            color = Color.Black,
-//            fontWeight = FontWeight.Bold,
-//            fontSize = 16.sp
-//        )
-//    }
-//}
-//
-
 @Composable
 fun RollButton(
     onClick: () -> Unit,

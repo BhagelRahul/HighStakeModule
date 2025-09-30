@@ -7,9 +7,7 @@ import okhttp3.OkHttpClient
 import okhttp3.logging.HttpLoggingInterceptor
 
 // ApiClient.kt
-
-
-object ApiClient {
+  object ApiClient {
     private const val BASE_URL = "https://playzelo-nrwt.onrender.com/"
 
     private val logging = HttpLoggingInterceptor().apply {

@@ -65,7 +65,7 @@ fun SplashScreen(navController: NavController) {
 fun Logo(modifier: Modifier) {
     Image(
         painter = painterResource(id = R.mipmap.stakeslogo),
-        contentDescription = "Teen Patti Logo",
+        contentDescription = "stakes Logo",
         modifier = Modifier
             .size(200.dp)
             .clip(RoundedCornerShape(16.dp))

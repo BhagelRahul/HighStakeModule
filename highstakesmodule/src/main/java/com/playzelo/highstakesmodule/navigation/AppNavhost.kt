@@ -38,10 +38,7 @@ fun AppNavHost() {
     ) {
         composable(Screen.Splash.route) { SplashScreen(navController) }
         composable(Screen.Entry.route) { EntryScreen(navController) }
-
-        composable(Screen.Game.route){
-
-            GameScreen(navController)
+        composable(Screen.Game.route){ GameScreen(navController)
         }
     }
 }
